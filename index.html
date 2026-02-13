@@ -972,16 +972,19 @@
   <!-- Supabase Auth -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Initialize Supabase client
-    const supabaseUrl = 'https://jzefsnvmlvxvwzpbpvaq.supabase.co';
-    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6ZWZzbnZtbHZ4dnd6cGJwdmFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc2NTYzMDYsImV4cCI6MjA1MzIzMjMwNn0.BgSQ5gSmFHrKzkXGJSlOX1k1L_LQrQJ-qe-L-uJDQN4';
-    const { createClient } = window.supabase;
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    // Global Supabase client variable
+    let supabaseClient;
 
     // Auth guard: redirect to login if not authenticated
     document.addEventListener('DOMContentLoaded', async () => {
       try {
-        const { data: { user }, error } = await supabase.auth.getUser();
+        // Initialize Supabase client
+        const supabaseUrl = 'https://jzefsnvmlvxvwzpbpvaq.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6ZWZzbnZtbHZ4dnd6cGJwdmFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc2NTYzMDYsImV4cCI6MjA1MzIzMjMwNn0.BgSQ5gSmFHrKzkXGJSlOX1k1L_LQrQJ-qe-L-uJDQN4';
+        const { createClient } = window.supabase;
+        supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+
+        const { data: { user }, error } = await supabaseClient.auth.getUser();
 
         if (error || !user) {
           // Not authenticated - redirect to login
@@ -1443,7 +1446,7 @@
     // Logout
     window.logout = async () => {
       try {
-        await supabase.auth.signOut();
+        await supabaseClient.auth.signOut();
         window.location.href = 'login.html';
       } catch(e) {
         console.error('Logout failed:', e);
