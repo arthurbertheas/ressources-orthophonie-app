@@ -273,8 +273,7 @@
     // Initialize Supabase client
     const supabaseUrl = 'https://jzefsnvmlvxvwzpbpvaq.supabase.co';
     const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6ZWZzbnZtbHZ4dnd6cGJwdmFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc2NTYzMDYsImV4cCI6MjA1MzIzMjMwNn0.BgSQ5gSmFHrKzkXGJSlOX1k1L_LQrQJ-qe-L-uJDQN4';
-    const { createClient } = supabase;
-    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
     const loginForm = document.getElementById('loginForm');
     const errorMessage = document.getElementById('errorMessage');
