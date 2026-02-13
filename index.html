@@ -976,30 +976,21 @@
     document.addEventListener('DOMContentLoaded', async () => {
       try {
         const memberstack = window.$memberstackDom;
-        if (!memberstack) {
-          console.log('Auth: not logged in - redirect disabled for testing');
-          return;
+        if (memberstack) {
+          const member = await memberstack.getCurrentMember();
+          if (member && member.data) {
+            const name = member.data.customFields?.name || member.data.auth?.email?.split('@')[0] || 'there';
+            document.querySelectorAll('.member-name').forEach(el => el.textContent = name);
+            const initial = name.charAt(0).toUpperCase();
+            document.querySelectorAll('.user-avatar').forEach(el => el.textContent = initial);
+            document.querySelectorAll('.user-name').forEach(el => el.textContent = name);
+          }
         }
-        const member = await memberstack.getCurrentMember();
-        if (!member || !member.data) {
-          console.log('Auth: not logged in - redirect disabled for testing');
-          return;
-        }
-        // Personalize greeting with member's name
-        const name = member.data.customFields?.name || member.data.auth?.email?.split('@')[0] || 'there';
-        document.querySelectorAll('.member-name').forEach(el => el.textContent = name);
-        
-        // Update avatar
-        const initial = name.charAt(0).toUpperCase();
-        document.querySelectorAll('.user-avatar').forEach(el => el.textContent = initial);
-        document.querySelectorAll('.user-name').forEach(el => el.textContent = name);
-        
-        // Show the app (hidden by default until auth check)
-        document.getElementById('app-shell').style.opacity = '1';
       } catch (e) {
-        console.error('Auth check failed:', e);
-        console.log('Auth: not logged in - redirect disabled for testing');
+        console.log('Auth check failed:', e);
       }
+      // Always show the app
+      document.getElementById('app-shell').style.opacity = '1';
     });
   </script>
   <style>
