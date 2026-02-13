@@ -1425,6 +1425,13 @@
     navigateTo(prev, navEl);
   }
 
+  // Listen for messages from iframe tools
+  window.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'close_tool') {
+      goBack();
+    }
+  });
+
   // Catalogue search
   document.getElementById('catalogue-search')?.addEventListener('input', (e) => {
     const q = e.target.value.toLowerCase().trim();
