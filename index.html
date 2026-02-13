@@ -1427,7 +1427,9 @@
 
   // Listen for messages from iframe tools
   window.addEventListener('message', (event) => {
+    console.log('📬 Message received from iframe:', event.data);
     if (event.data && event.data.type === 'close_tool') {
+      console.log('✅ Closing tool and going back to dashboard');
       goBack();
     }
   });
