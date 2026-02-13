@@ -969,33 +969,46 @@
   }
   </style>
 
-  <!-- Memberstack Auth -->
-  <script data-memberstack-app="app_cmkl0qnl803190sqe79zt1mbi" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+  <!-- Supabase Auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    // Initialize Supabase client
+    const supabaseUrl = 'https://jzefsnvmlvxvwzpbpvaq.supabase.co';
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6ZWZzbnZtbHZ4dnd6cGJwdmFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc2NTYzMDYsImV4cCI6MjA1MzIzMjMwNn0.BgSQ5gSmFHrKzkXGJSlOX1k1L_LQrQJ-qe-L-uJDQN4';
+    const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
     // Auth guard: redirect to login if not authenticated
     document.addEventListener('DOMContentLoaded', async () => {
       try {
-        const memberstack = window.$memberstackDom;
-        if (memberstack) {
-          const member = await memberstack.getCurrentMember();
-          if (member && member.data) {
-            const name = member.data.customFields?.name || member.data.auth?.email?.split('@')[0] || 'there';
-            document.querySelectorAll('.member-name').forEach(el => el.textContent = name);
-            const initial = name.charAt(0).toUpperCase();
-            document.querySelectorAll('.user-avatar').forEach(el => el.textContent = initial);
-            document.querySelectorAll('.user-name').forEach(el => el.textContent = name);
-          }
+        const { data: { user }, error } = await supabase.auth.getUser();
+
+        if (error || !user) {
+          // Not authenticated - redirect to login
+          window.location.href = 'login.html';
+          return;
         }
+
+        // User is authenticated - display user info
+        const email = user.email || '';
+        const name = user.user_metadata?.name || email.split('@')[0] || 'User';
+        const initial = name.charAt(0).toUpperCase();
+
+        // Update user display elements
+        document.querySelectorAll('.member-name').forEach(el => el.textContent = name);
+        document.querySelectorAll('.user-avatar').forEach(el => el.textContent = initial);
+        document.querySelectorAll('.user-name').forEach(el => el.textContent = name);
+
+        // Show the app
+        document.getElementById('app-shell').style.opacity = '1';
       } catch (e) {
-        console.log('Auth check failed:', e);
+        console.error('Auth check failed:', e);
+        window.location.href = 'login.html';
       }
-      // Always show the app
-      document.getElementById('app-shell').style.opacity = '1';
     });
   </script>
   <style>
     /* Hide app until auth confirmed */
-    .app-shell { opacity: 1; }
+    .app-shell { opacity: 0; }
   </style>
 
 </head>
@@ -1429,11 +1442,11 @@
     // Logout
     window.logout = async () => {
       try {
-        const memberstack = window.$memberstackDom;
-        await memberstack.logout();
-        window.location.href = 'https://materielorthophonie.fr';
+        await supabase.auth.signOut();
+        window.location.href = 'login.html';
       } catch(e) {
-        window.location.href = 'https://materielorthophonie.fr';
+        console.error('Logout failed:', e);
+        window.location.href = 'login.html';
       }
     };
 

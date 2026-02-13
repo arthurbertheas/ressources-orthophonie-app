@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription - Matériel Orthophonie</title>
+
+  <style>
+    /* Import Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&display=swap');
+
+    @font-face {
+      font-family: 'Alan Sans';
+      src: url('data:font/woff2;base64,...') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    /* CSS Variables - Matching Shell Design */
+    :root {
+      --bg: #F6F5F1;
+      --bg-warm: #FAF9F6;
+      --bg-card: #FFFFFF;
+      --text-primary: #1C1B22;
+      --text-secondary: #64607A;
+      --text-muted: #9E99AE;
+      --accent: #5947C7;
+      --accent-hover: #6B5BD4;
+      --accent-muted: #8578D9;
+      --accent-bg: #EDEBFB;
+      --border: #E9E7E1;
+      --border-strong: #D8D5CD;
+      --radius: 14px;
+      --radius-xs: 7px;
+      --shadow-md: 0 4px 16px rgba(28,27,34,0.06);
+      --font-display: 'Fraunces', serif;
+      --font-body: 'Alan Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* Signup Container */
+    .signup-container {
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Logo */
+    .signup-logo {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 32px;
+      justify-content: center;
+    }
+
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Title */
+    h1 {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xs);
+      font-size: 14px;
+      font-family: var(--font-body);
+      color: var(--text-primary);
+      background: var(--bg-card);
+      outline: none;
+      transition: all 0.2s var(--ease);
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(89, 71, 199, 0.07);
+    }
+
+    input::placeholder {
+      color: var(--text-muted);
+    }
+
+    input.error {
+      border-color: #E53E3E;
+    }
+
+    /* Field Error */
+    .field-error {
+      font-size: 12px;
+      color: #E53E3E;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .field-error.show {
+      display: block;
+    }
+
+    /* Password Requirements */
+    .password-requirements {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Button */
+    .btn-primary {
+      width: 100%;
+      padding: 12px 20px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius-xs);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: all 0.2s var(--ease);
+      margin-top: 8px;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(89, 71, 199, 0.2);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Error Message */
+    .error-message {
+      background: #FEE;
+      border: 1px solid #FCC;
+      color: #C33;
+      padding: 12px 14px;
+      border-radius: var(--radius-xs);
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    /* Success Message */
+    .success-message {
+      background: #EEFBF3;
+      border: 1px solid #2B9E6B;
+      color: #2B9E6B;
+      padding: 12px 14px;
+      border-radius: var(--radius-xs);
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    /* Footer Link */
+    .signup-footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .signup-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.15s;
+    }
+
+    .signup-footer a:hover {
+      color: var(--accent-hover);
+    }
+
+    /* Loading State */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+  </style>
+
+  <!-- Supabase Auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="signup-container">
+    <!-- Logo -->
+    <div class="signup-logo">
+      <div class="logo-mark">M</div>
+      <div class="logo-text">Matériel Orthophonie</div>
+    </div>
+
+    <!-- Title -->
+    <h1>Inscription</h1>
+    <p class="subtitle">Créez votre compte pour accéder aux ressources</p>
+
+    <!-- Error Message -->
+    <div class="error-message" id="errorMessage"></div>
+
+    <!-- Success Message -->
+    <div class="success-message" id="successMessage"></div>
+
+    <!-- Signup Form -->
+    <form id="signupForm">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="votre@email.fr" required>
+        <div class="field-error" id="emailError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required>
+        <div class="password-requirements">Minimum 6 caractères</div>
+        <div class="field-error" id="passwordError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required>
+        <div class="field-error" id="confirmPasswordError"></div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="submitBtn">
+        Créer mon compte
+      </button>
+    </form>
+
+    <!-- Footer -->
+    <div class="signup-footer">
+      Déjà un compte ? <a href="login.html">Se connecter</a>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Supabase client
+    const supabaseUrl = 'https://jzefsnvmlvxvwzpbpvaq.supabase.co';
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6ZWZzbnZtbHZ4dnd6cGJwdmFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc2NTYzMDYsImV4cCI6MjA1MzIzMjMwNn0.BgSQ5gSmFHrKzkXGJSlOX1k1L_LQrQJ-qe-L-uJDQN4';
+    const { createClient } = supabase;
+    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+
+    const signupForm = document.getElementById('signupForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const submitBtn = document.getElementById('submitBtn');
+
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    const confirmPasswordError = document.getElementById('confirmPasswordError');
+
+    // Check if user is already logged in
+    (async () => {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (user) {
+        window.location.href = 'index.html';
+      }
+    })();
+
+    // Email validation
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    // Clear field errors
+    function clearFieldError(input, errorElement) {
+      input.classList.remove('error');
+      errorElement.classList.remove('show');
+      errorElement.textContent = '';
+    }
+
+    // Show field error
+    function showFieldError(input, errorElement, message) {
+      input.classList.add('error');
+      errorElement.textContent = message;
+      errorElement.classList.add('show');
+    }
+
+    // Real-time validation
+    emailInput.addEventListener('blur', () => {
+      const email = emailInput.value.trim();
+      if (email && !isValidEmail(email)) {
+        showFieldError(emailInput, emailError, 'Format d\'email invalide');
+      } else {
+        clearFieldError(emailInput, emailError);
+      }
+    });
+
+    passwordInput.addEventListener('input', () => {
+      clearFieldError(passwordInput, passwordError);
+      if (confirmPasswordInput.value) {
+        validatePasswordMatch();
+      }
+    });
+
+    confirmPasswordInput.addEventListener('input', () => {
+      validatePasswordMatch();
+    });
+
+    function validatePasswordMatch() {
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if (confirmPassword && password !== confirmPassword) {
+        showFieldError(confirmPasswordInput, confirmPasswordError, 'Les mots de passe ne correspondent pas');
+      } else {
+        clearFieldError(confirmPasswordInput, confirmPasswordError);
+      }
+    }
+
+    // Handle form submission
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      // Hide previous messages
+      errorMessage.classList.remove('show');
+      errorMessage.textContent = '';
+      successMessage.classList.remove('show');
+      successMessage.textContent = '';
+
+      // Clear all field errors
+      clearFieldError(emailInput, emailError);
+      clearFieldError(passwordInput, passwordError);
+      clearFieldError(confirmPasswordInput, confirmPasswordError);
+
+      // Validation
+      let hasError = false;
+
+      if (!isValidEmail(email)) {
+        showFieldError(emailInput, emailError, 'Format d\'email invalide');
+        hasError = true;
+      }
+
+      if (password.length < 6) {
+        showFieldError(passwordInput, passwordError, 'Le mot de passe doit contenir au moins 6 caractères');
+        hasError = true;
+      }
+
+      if (password !== confirmPassword) {
+        showFieldError(confirmPasswordInput, confirmPasswordError, 'Les mots de passe ne correspondent pas');
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      // Disable button and show loading state
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Création du compte...';
+      signupForm.classList.add('loading');
+
+      try {
+        const { data, error } = await supabaseClient.auth.signUp({
+          email: email,
+          password: password,
+        });
+
+        if (error) throw error;
+
+        // Success
+        successMessage.textContent = 'Compte créé avec succès ! Redirection vers la page de connexion...';
+        successMessage.classList.add('show');
+
+        // Redirect to login after 2 seconds
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+
+      } catch (error) {
+        // Show error message
+        let errorText = 'Une erreur est survenue. Veuillez réessayer.';
+
+        if (error.message.includes('User already registered')) {
+          errorText = 'Cet email est déjà utilisé.';
+        } else if (error.message.includes('Password should be')) {
+          errorText = 'Le mot de passe ne respecte pas les critères requis.';
+        }
+
+        errorMessage.textContent = errorText;
+        errorMessage.classList.add('show');
+
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Créer mon compte';
+        signupForm.classList.remove('loading');
+      }
+    });
+  </script>
+
+</body>
+</html>
