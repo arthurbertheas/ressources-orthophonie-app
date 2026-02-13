@@ -977,12 +977,12 @@
       try {
         const memberstack = window.$memberstackDom;
         if (!memberstack) {
-          window.location.href = 'https://materielorthophonie.fr/account/login';
+          console.log('Auth: not logged in - redirect disabled for testing');
           return;
         }
         const member = await memberstack.getCurrentMember();
         if (!member || !member.data) {
-          window.location.href = 'https://materielorthophonie.fr/account/login';
+          console.log('Auth: not logged in - redirect disabled for testing');
           return;
         }
         // Personalize greeting with member's name
@@ -998,7 +998,7 @@
         document.getElementById('app-shell').style.opacity = '1';
       } catch (e) {
         console.error('Auth check failed:', e);
-        window.location.href = 'https://materielorthophonie.fr/account/login';
+        console.log('Auth: not logged in - redirect disabled for testing');
       }
     });
   </script>
