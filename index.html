@@ -1123,13 +1123,13 @@
             <div class="featured-desc">Phonèmes et discrimination auditive</div>
             <div class="featured-cat"><span class="featured-cat-dot"></span>Phonologie</div>
           </div>
-          <div class="featured-card" onclick="openTool('banque-mots','Banque de mots','https://antigravity-word-hoard.vercel.app/')">
+          <div class="featured-card" onclick="openTool('banque-mots','La Boîte à mots','https://antigravity-word-hoard.vercel.app/')">
             <div class="featured-card-head">
               <div class="featured-emoji">🔡</div>
               <span class="featured-badge badge-new">Nouveau</span>
             </div>
-            <div class="featured-name">Banque de mots</div>
-            <div class="featured-desc">Listes ciblées par phonèmes ou thématiques</div>
+            <div class="featured-name">La Boîte à mots</div>
+            <div class="featured-desc">Outil de progression du déchiffrage</div>
             <div class="featured-cat"><span class="featured-cat-dot"></span>Lecture & Écriture</div>
           </div>
         </div>
@@ -1142,7 +1142,7 @@
                 <div class="cl-dot-col"><div class="cl-dot"></div><div class="cl-wire"></div></div>
                 <div>
                   <div class="cl-date">Fév 2026</div>
-                  <div class="cl-text"><span class="cl-tag new">New</span>Banque de mots disponible</div>
+                  <div class="cl-text"><span class="cl-tag new">New</span>La Boîte à mots disponible</div>
                 </div>
               </div>
               <div class="cl-entry">
@@ -1165,7 +1165,7 @@
           <div class="tip-card">
             <div class="tip-title">💡 Astuce du jour</div>
             <div class="tip-text">
-              Combinez la <strong>Banque de mots</strong> et la <strong>Banque d'images</strong> pour créer du matériel de séance complet : générez une liste ciblée, puis imprimez les images correspondantes.
+              Combinez <strong>La Boîte à mots</strong> et la <strong>Banque d'images</strong> pour créer du matériel de séance complet : générez une liste ciblée, puis imprimez les images correspondantes.
             </div>
             <div class="tip-cta" onclick="navigateTo('catalogue', document.querySelector('[data-page=catalogue]'))">
               Voir tous les outils →
@@ -1233,9 +1233,9 @@
             <span class="cat-count">4 outils</span>
           </div>
           <div class="cat-grid">
-            <div class="cat-item" data-tags="mots lexique vocabulaire phonèmes" onclick="openTool('banque-mots','Banque de mots','https://antigravity-word-hoard.vercel.app/')">
+            <div class="cat-item" data-tags="mots lexique vocabulaire phonèmes" onclick="openTool('banque-mots','La Boîte à mots','https://antigravity-word-hoard.vercel.app/')">
               <span class="cat-item-emoji">🔡</span>
-              <div class="cat-item-info"><div class="cat-item-name">Banque de mots</div><div class="cat-item-desc">Listes ciblées par phonèmes</div></div>
+              <div class="cat-item-info"><div class="cat-item-name">La Boîte à mots</div><div class="cat-item-desc">Outil de progression du déchiffrage</div></div>
               <span class="cat-item-action">Ouvrir →</span>
             </div>
             <div class="cat-item disabled" data-tags="fluence lecture vitesse">
@@ -1310,7 +1310,7 @@
             <div class="clf-dot-col"><div class="clf-dot"></div><div class="clf-wire"></div></div>
             <div class="clf-content">
               <div class="clf-date">Février 2026</div>
-              <div class="clf-title">🔡 Banque de mots</div>
+              <div class="clf-title">🔡 La Boîte à mots</div>
               <div class="clf-desc">Nouveau générateur de listes de mots ciblées par phonèmes, graphèmes, ou thématiques. Filtrage avancé et export PDF.</div>
             </div>
           </div>
@@ -1465,7 +1465,7 @@
     document.getElementById('overlay').classList.remove('open');
   }
 
-  // Listen for messages from embedded tools (e.g., Banque de mots quit button)
+  // Listen for messages from embedded tools (e.g., La Boîte à mots quit button)
   window.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'close_tool') {
       goBack();
