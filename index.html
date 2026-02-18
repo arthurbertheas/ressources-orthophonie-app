@@ -38,8 +38,8 @@
   }
   :root {
     --sidebar-w: 240px;
-    --sidebar-collapsed: 68px;
-    --topbar-h: 56px;
+    --sidebar-collapsed: 0px;
+    --topbar-h: 44px;
 
     --bg: #F6F5F1;
     --bg-warm: #FAF9F6;
@@ -127,6 +127,9 @@
 
   .sidebar.collapsed {
     width: var(--sidebar-collapsed);
+    padding: 0;
+    border: none;
+    overflow: hidden;
   }
 
   /* Logo */
@@ -333,11 +336,11 @@
     height: var(--topbar-h);
     display: flex;
     align-items: center;
-    padding: 0 28px;
+    padding: 0 20px;
     border-bottom: 1px solid var(--border);
     background: var(--bg-warm);
     flex-shrink: 0;
-    gap: 16px;
+    gap: 12px;
   }
 
   .topbar-back {
@@ -363,9 +366,56 @@
 
   .topbar-back.visible { display: flex; }
 
+  /* Logo in topbar — visible only when tool is open */
+  .topbar-logo {
+    display: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: var(--accent);
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .topbar-logo:hover {
+    transform: scale(1.06);
+    box-shadow: 0 2px 8px rgba(108, 92, 231, 0.25);
+  }
+  .topbar-logo.visible { display: flex; }
+
+  .topbar-sep {
+    display: none;
+    width: 1px;
+    height: 20px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+  .topbar-sep.visible { display: block; }
+
+  .topbar-breadcrumb {
+    display: none;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-family: var(--font-body);
+  }
+  .topbar-breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .topbar-breadcrumb a:hover { color: var(--accent); }
+  .topbar-breadcrumb .sep { margin: 0 6px; }
+  .topbar-breadcrumb.visible { display: block; }
+
   .topbar-title {
     font-family: var(--font-display);
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
     color: var(--text-primary);
     letter-spacing: -0.2px;
@@ -1090,6 +1140,9 @@
   <!-- ═══════ MAIN ═══════ -->
   <div class="main">
     <div class="topbar" id="topbar">
+      <div class="topbar-logo" id="topbar-logo" onclick="goBack()" title="Retour à l'accueil">R</div>
+      <div class="topbar-sep" id="topbar-sep"></div>
+      <div class="topbar-breadcrumb" id="topbar-breadcrumb"><a href="#" onclick="goBack(); return false;">Mes outils</a><span class="sep">›</span></div>
       <button class="topbar-back" id="topbar-back" onclick="goBack()">← Retour</button>
       <div class="topbar-title" id="topbar-title">Accueil</div>
       <div class="topbar-spacer"></div>
@@ -1354,17 +1407,32 @@
   const sidebar = document.getElementById('sidebar');
   const topbarTitle = document.getElementById('topbar-title');
   const topbarBack = document.getElementById('topbar-back');
+  const topbarLogo = document.getElementById('topbar-logo');
+  const topbarSep = document.getElementById('topbar-sep');
+  const topbarBreadcrumb = document.getElementById('topbar-breadcrumb');
   const toolIframe = document.getElementById('tool-iframe');
   let currentPage = 'home';
   let previousPage = 'home';
+
+  // Show/hide tool-mode topbar elements
+  function setToolMode(active) {
+    const method = active ? 'add' : 'remove';
+    topbarLogo.classList[method]('visible');
+    topbarSep.classList[method]('visible');
+    topbarBreadcrumb.classList[method]('visible');
+    topbarBack.classList.remove('visible'); // Always hide old back button
+  }
 
   // Navigation
   function navigateTo(page, navEl) {
     previousPage = currentPage;
     currentPage = page;
 
-    // Expand sidebar if collapsed
+    // Expand sidebar
     sidebar.classList.remove('collapsed');
+
+    // Hide tool-mode elements
+    setToolMode(false);
 
     // Update nav active state
     document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => n.classList.remove('active'));
@@ -1383,7 +1451,6 @@
     // Update topbar
     const titles = { home: 'Accueil', catalogue: 'Mes outils', changelog: 'Nouveautés' };
     topbarTitle.textContent = titles[page] || page;
-    topbarBack.classList.remove('visible');
 
     // Reset iframe
     if (page !== 'tool') {
@@ -1397,7 +1464,7 @@
     previousPage = currentPage;
     currentPage = 'tool';
 
-    // Collapse sidebar to icon rail
+    // Hide sidebar completely
     sidebar.classList.add('collapsed');
 
     // Deactivate nav
@@ -1412,9 +1479,9 @@
       toolIframe.src = url;
     }
 
-    // Topbar
+    // Topbar — show logo + breadcrumb + tool name
     topbarTitle.textContent = name;
-    topbarBack.classList.add('visible');
+    setToolMode(true);
 
     closeMobile();
   }
