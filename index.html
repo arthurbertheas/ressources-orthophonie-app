@@ -1140,9 +1140,9 @@
   <!-- ═══════ MAIN ═══════ -->
   <div class="main">
     <div class="topbar" id="topbar">
-      <div class="topbar-logo" id="topbar-logo" onclick="goBack()" title="Retour à l'accueil">R</div>
+      <div class="topbar-logo" id="topbar-logo" onclick="navigateTo('home', document.querySelector('.nav-item[data-page=home]'))" title="Retour à l'accueil">R</div>
       <div class="topbar-sep" id="topbar-sep"></div>
-      <div class="topbar-breadcrumb" id="topbar-breadcrumb"><a href="#" onclick="goBack(); return false;">Mes outils</a><span class="sep">›</span></div>
+      <div class="topbar-breadcrumb" id="topbar-breadcrumb"><a href="#" onclick="navigateTo('catalogue', document.querySelector('.nav-item[data-page=catalogue]')); return false;">Mes outils</a><span class="sep">›</span></div>
       <button class="topbar-back" id="topbar-back" onclick="goBack()">← Retour</button>
       <div class="topbar-title" id="topbar-title">Accueil</div>
       <div class="topbar-spacer"></div>
