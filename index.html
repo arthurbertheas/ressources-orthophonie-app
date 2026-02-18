@@ -1474,9 +1474,23 @@
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-tool').classList.add('active');
 
-    // Load iframe
+    // Load iframe and relay auth session
     if (toolIframe.src !== url) {
       toolIframe.src = url;
+      toolIframe.onload = async () => {
+        try {
+          const { data: { session } } = await supabaseClient.auth.getSession();
+          if (session) {
+            toolIframe.contentWindow.postMessage({
+              type: 'auth_session',
+              access_token: session.access_token,
+              refresh_token: session.refresh_token
+            }, new URL(url).origin);
+          }
+        } catch (e) {
+          console.error('Failed to relay auth to iframe:', e);
+        }
+      };
     }
 
     // Topbar — show logo + breadcrumb + tool name
