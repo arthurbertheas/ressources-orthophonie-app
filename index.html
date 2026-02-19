@@ -1414,6 +1414,9 @@
   let currentPage = 'home';
   let previousPage = 'home';
   let currentToolUrl = null;
+  let currentToolId = null;
+  let toolOverlayOpen = false;
+  let closingOverlayViaBack = false;
 
   // ── URL Routing ──
   const PAGE_PATHS = {
@@ -1472,6 +1475,8 @@
     // Recreate iframe to cleanly reset it without creating a history entry.
     if (page !== 'tool') {
       currentToolUrl = null;
+      currentToolId = null;
+      toolOverlayOpen = false;
       const container = toolIframe.parentNode;
       const fresh = document.createElement('iframe');
       fresh.id = 'tool-iframe';
@@ -1492,6 +1497,7 @@
   function openTool(id, name, url, { pushHistory = true } = {}) {
     previousPage = currentPage;
     currentPage = 'tool';
+    currentToolId = id;
 
     // Hide sidebar completely
     sidebar.classList.add('collapsed');
@@ -1590,10 +1596,28 @@
     document.getElementById('overlay').classList.remove('open');
   }
 
-  // Listen for messages from embedded tools (e.g., La Boîte à mots back button)
+  // Listen for messages from embedded tools
   window.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'close_tool' && currentPage === 'tool') {
-      // Navigate to catalogue without pushing (parent popstate may already handle this)
+    if (!event.data) return;
+
+    // Overlay opened/closed inside the iframe (diaporama, imagier)
+    if (event.data.type === 'focus_mode_change' && currentPage === 'tool') {
+      if (event.data.isOpen && !toolOverlayOpen) {
+        toolOverlayOpen = true;
+        // Push an overlay entry so back button closes the overlay
+        history.pushState({ tool: currentToolId, overlay: true }, '', window.location.href);
+      } else if (!event.data.isOpen && toolOverlayOpen) {
+        toolOverlayOpen = false;
+        if (!closingOverlayViaBack) {
+          // Overlay closed by X button or Escape — pop the overlay history entry
+          history.back();
+        }
+        closingOverlayViaBack = false;
+      }
+    }
+
+    // Fallback: iframe asked to close itself (legacy)
+    if (event.data.type === 'close_tool' && currentPage === 'tool') {
       const navEl = document.querySelector('.nav-item[data-page="catalogue"]');
       navigateTo('catalogue', navEl, { pushHistory: false });
       history.replaceState({ page: 'catalogue' }, '', '/mes-outils');
@@ -1603,16 +1627,34 @@
   // ── URL Routing: popstate (browser back/forward) ──
   window.addEventListener('popstate', (e) => {
     const state = e.state;
-    if (state && state.tool) {
+
+    if (state && state.tool && state.overlay) {
+      // Forward into an overlay entry — reopen the tool (overlay state is lost)
       const route = TOOL_ROUTES[state.tool];
-      if (route) {
-        openTool(state.tool, route.name, route.url, { pushHistory: false });
+      if (route) openTool(state.tool, route.name, route.url, { pushHistory: false });
+      toolOverlayOpen = true;
+
+    } else if (state && state.tool) {
+      if (toolOverlayOpen) {
+        // Back from overlay → close it, stay on tool
+        closingOverlayViaBack = true;
+        toolOverlayOpen = false;
+        try { toolIframe.contentWindow.postMessage({ type: 'close_overlay' }, '*'); } catch(e) {}
+      } else if (currentPage === 'tool' && currentToolId === state.tool) {
+        // Extra iframe history entry (location.replace fallback) — skip it
+        history.back();
+        return;
+      } else {
+        // Forward navigation to tool
+        const route = TOOL_ROUTES[state.tool];
+        if (route) openTool(state.tool, route.name, route.url, { pushHistory: false });
       }
+
     } else if (state && state.page) {
       const navEl = document.querySelector(`.nav-item[data-page="${state.page}"]`);
       navigateTo(state.page, navEl, { pushHistory: false });
+
     } else {
-      // Unknown state — go to home
       const navEl = document.querySelector('.nav-item[data-page="home"]');
       navigateTo('home', navEl, { pushHistory: false });
     }
