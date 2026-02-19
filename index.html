@@ -1410,7 +1410,7 @@
   const topbarLogo = document.getElementById('topbar-logo');
   const topbarSep = document.getElementById('topbar-sep');
   const topbarBreadcrumb = document.getElementById('topbar-breadcrumb');
-  const toolIframe = document.getElementById('tool-iframe');
+  let toolIframe = document.getElementById('tool-iframe');
   let currentPage = 'home';
   let previousPage = 'home';
 
@@ -1468,9 +1468,16 @@
     const titles = { home: 'Accueil', catalogue: 'Mes outils', changelog: 'Nouveautés' };
     topbarTitle.textContent = titles[page] || page;
 
-    // Reset iframe
+    // Recreate iframe to reset it without creating a history entry.
+    // A fresh iframe has "initial about:blank", so the next src = url
+    // replaces instead of pushing (avoids double-back-press).
     if (page !== 'tool') {
-      toolIframe.src = 'about:blank';
+      const container = toolIframe.parentNode;
+      const fresh = document.createElement('iframe');
+      fresh.id = 'tool-iframe';
+      fresh.allow = 'clipboard-write';
+      container.replaceChild(fresh, toolIframe);
+      toolIframe = fresh;
     }
 
     // Update URL
@@ -1577,8 +1584,8 @@
 
   // Listen for messages from embedded tools (e.g., La Boîte à mots back button)
   window.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'close_tool') {
-      // Navigate to catalogue without pushing (iframe already consumed the back step)
+    if (event.data && event.data.type === 'close_tool' && currentPage === 'tool') {
+      // Navigate to catalogue without pushing (parent popstate may already handle this)
       const navEl = document.querySelector('.nav-item[data-page="catalogue"]');
       navigateTo('catalogue', navEl, { pushHistory: false });
       history.replaceState({ page: 'catalogue' }, '', '/mes-outils');
