@@ -1578,7 +1578,8 @@
   // Listen for messages from embedded tools (e.g., La Boîte à mots quit button)
   window.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'close_tool') {
-      goBack();
+      // Use history.back() to preserve forward navigation
+      history.back();
     }
   });
 
