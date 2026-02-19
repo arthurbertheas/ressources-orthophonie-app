@@ -1413,6 +1413,7 @@
   let toolIframe = document.getElementById('tool-iframe');
   let currentPage = 'home';
   let previousPage = 'home';
+  let currentToolUrl = null;
 
   // ── URL Routing ──
   const PAGE_PATHS = {
@@ -1468,10 +1469,9 @@
     const titles = { home: 'Accueil', catalogue: 'Mes outils', changelog: 'Nouveautés' };
     topbarTitle.textContent = titles[page] || page;
 
-    // Recreate iframe to reset it without creating a history entry.
-    // A fresh iframe has "initial about:blank", so the next src = url
-    // replaces instead of pushing (avoids double-back-press).
+    // Recreate iframe to cleanly reset it without creating a history entry.
     if (page !== 'tool') {
+      currentToolUrl = null;
       const container = toolIframe.parentNode;
       const fresh = document.createElement('iframe');
       fresh.id = 'tool-iframe';
@@ -1503,9 +1503,23 @@
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-tool').classList.add('active');
 
-    // Load iframe and relay auth session
-    if (toolIframe.src !== url) {
-      toolIframe.src = url;
+    // Topbar — show logo + breadcrumb + tool name
+    topbarTitle.textContent = name;
+    setToolMode(true);
+
+    // Push URL BEFORE iframe navigation so location.replace()
+    // modifies the new history entry, not the previous one.
+    if (pushHistory) {
+      const route = TOOL_ROUTES[id];
+      const slug = route ? route.slug : id;
+      history.pushState({ tool: id }, '', '/mes-outils/' + slug);
+    }
+
+    // Load iframe via location.replace() to avoid creating a history entry.
+    // This keeps the history stack to a single entry per tool navigation,
+    // so one back press returns to the catalogue.
+    if (currentToolUrl !== url) {
+      currentToolUrl = url;
       toolIframe.onload = async () => {
         try {
           const { data: { session } } = await supabaseClient.auth.getSession();
@@ -1520,17 +1534,11 @@
           console.error('Failed to relay auth to iframe:', e);
         }
       };
-    }
-
-    // Topbar — show logo + breadcrumb + tool name
-    topbarTitle.textContent = name;
-    setToolMode(true);
-
-    // Update URL
-    if (pushHistory) {
-      const route = TOOL_ROUTES[id];
-      const slug = route ? route.slug : id;
-      history.pushState({ tool: id }, '', '/mes-outils/' + slug);
+      try {
+        toolIframe.contentWindow.location.replace(url);
+      } catch (e) {
+        toolIframe.src = url; // Fallback
+      }
     }
 
     closeMobile();
