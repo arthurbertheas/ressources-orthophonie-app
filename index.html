@@ -1414,6 +1414,22 @@
   let currentPage = 'home';
   let previousPage = 'home';
 
+  // ── URL Routing ──
+  const PAGE_PATHS = {
+    home: '/accueil',
+    catalogue: '/mes-outils',
+    changelog: '/nouveautes'
+  };
+
+  const TOOL_ROUTES = {
+    'banque-images':    { slug: 'banque-images',       name: "Banque d'images",       url: 'https://materielorthophonie.webflow.io/account/game/banque-images' },
+    'flash-card':       { slug: 'cartes-orthophonie',  name: 'Cartes orthophonie',    url: 'https://materielorthophonie.webflow.io/account/game/flash-card' },
+    'banque-mots':      { slug: 'boite-a-mots',       name: 'La Boîte à mots',      url: 'https://antigravity-word-hoard.vercel.app/' },
+    'banque-coloriage': { slug: 'coloriages',          name: 'Banque de coloriages',  url: 'https://materielorthophonie.webflow.io/account/game/banque-coloriage' },
+    'yahtzee':          { slug: 'yahtzee',             name: 'Yahtzee',               url: 'https://materielorthophonie.webflow.io/account/game/yahtzee' },
+    'bataille-navale':  { slug: 'bataille-navale',     name: 'Bataille navale',       url: 'https://materielorthophonie.webflow.io/account/game/bataille-navale' }
+  };
+
   // Show/hide tool-mode topbar elements
   function setToolMode(active) {
     const method = active ? 'add' : 'remove';
@@ -1424,7 +1440,7 @@
   }
 
   // Navigation
-  function navigateTo(page, navEl) {
+  function navigateTo(page, navEl, { pushHistory = true } = {}) {
     previousPage = currentPage;
     currentPage = page;
 
@@ -1457,10 +1473,16 @@
       toolIframe.src = 'about:blank';
     }
 
+    // Update URL
+    if (pushHistory) {
+      const path = PAGE_PATHS[page] || '/accueil';
+      history.pushState({ page }, '', path);
+    }
+
     closeMobile();
   }
 
-  function openTool(id, name, url) {
+  function openTool(id, name, url, { pushHistory = true } = {}) {
     previousPage = currentPage;
     currentPage = 'tool';
 
@@ -1496,6 +1518,13 @@
     // Topbar — show logo + breadcrumb + tool name
     topbarTitle.textContent = name;
     setToolMode(true);
+
+    // Update URL
+    if (pushHistory) {
+      const route = TOOL_ROUTES[id];
+      const slug = route ? route.slug : id;
+      history.pushState({ tool: id }, '', '/mes-outils/' + slug);
+    }
 
     closeMobile();
   }
@@ -1552,6 +1581,56 @@
       goBack();
     }
   });
+
+  // ── URL Routing: popstate (browser back/forward) ──
+  window.addEventListener('popstate', (e) => {
+    const state = e.state;
+    if (state && state.tool) {
+      const route = TOOL_ROUTES[state.tool];
+      if (route) {
+        openTool(state.tool, route.name, route.url, { pushHistory: false });
+      }
+    } else if (state && state.page) {
+      const navEl = document.querySelector(`.nav-item[data-page="${state.page}"]`);
+      navigateTo(state.page, navEl, { pushHistory: false });
+    } else {
+      // Unknown state — go to home
+      const navEl = document.querySelector('.nav-item[data-page="home"]');
+      navigateTo('home', navEl, { pushHistory: false });
+    }
+  });
+
+  // ── URL Routing: initial load ──
+  function routeFromPath(pathname) {
+    // Check tool routes: /mes-outils/{slug}
+    if (pathname.startsWith('/mes-outils/')) {
+      const slug = pathname.replace('/mes-outils/', '');
+      for (const [id, route] of Object.entries(TOOL_ROUTES)) {
+        if (route.slug === slug) {
+          openTool(id, route.name, route.url, { pushHistory: false });
+          history.replaceState({ tool: id }, '', pathname);
+          return;
+        }
+      }
+    }
+
+    // Check page routes
+    for (const [page, path] of Object.entries(PAGE_PATHS)) {
+      if (pathname === path) {
+        const navEl = document.querySelector(`.nav-item[data-page="${page}"]`);
+        navigateTo(page, navEl, { pushHistory: false });
+        history.replaceState({ page }, '', path);
+        return;
+      }
+    }
+
+    // Default: home (for / or /index.html or unknown)
+    const navEl = document.querySelector('.nav-item[data-page="home"]');
+    navigateTo('home', navEl, { pushHistory: false });
+    history.replaceState({ page: 'home' }, '', '/accueil');
+  }
+
+  routeFromPath(window.location.pathname);
 </script>
 
 </body>
