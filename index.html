@@ -1575,11 +1575,13 @@
     document.getElementById('overlay').classList.remove('open');
   }
 
-  // Listen for messages from embedded tools (e.g., La Boîte à mots quit button)
+  // Listen for messages from embedded tools (e.g., La Boîte à mots back button)
   window.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'close_tool') {
-      // Use history.back() to preserve forward navigation
-      history.back();
+      // Navigate to catalogue without pushing (iframe already consumed the back step)
+      const navEl = document.querySelector('.nav-item[data-page="catalogue"]');
+      navigateTo('catalogue', navEl, { pushHistory: false });
+      history.replaceState({ page: 'catalogue' }, '', '/mes-outils');
     }
   });
 
